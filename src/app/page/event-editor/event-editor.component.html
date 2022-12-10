@@ -14,7 +14,7 @@
         <input name="date" [(ngModel)]="event.date" type="text" class="form-control"
           required pattern="(([1-9]|1[0-2])\/([1-9]|[12][0-9]|3[01])\/([12]\d{3}))">
         <div [hidden]="eventForm?.controls?.date?.valid || eventForm?.controls?.date?.pristine" class="error-message">
-          Date must be in the following format: DD/MM/YYYY.
+          Date must be in the following format: MM/DD/YYYY.
         </div>
       </div>
       <div class="form-group">
@@ -22,7 +22,7 @@
         <input name="time" [(ngModel)]="event.time" type="text" class="form-control" required
           pattern="([0-9]|(1[0-2])):([0-5][0-9]) ([AP]M)">
         <div [hidden]="eventForm?.controls?.time?.valid || eventForm?.controls?.time?.pristine" class="error-message">
-          Time must be in the following format: 00am/00pm.
+          Time must be in the following format: 00:00 AM/PM.
         </div>
       </div>
       <div class="form-group">
