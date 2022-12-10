@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { switchMap, tap } from 'rxjs/operators';
 import { EventService } from 'src/app/service/event.service';
 import { Event } from 'src/app/model/event';
 import { FormGroup, NgForm } from '@angular/forms';
@@ -12,11 +12,12 @@ import { FormGroup, NgForm } from '@angular/forms';
   styleUrls: ['./event-editor.component.scss']
 })
 export class EventEditorComponent implements OnInit {
+  @ViewChild('eventForm') eventForm: NgForm | undefined;
 
   // 1. Kiolvasni az id paramétert az URL-ből.
   // 2. Ezzel a paraméterrel meghívni az EventService.get metódust.
   event$: Observable<Event> = this.activatedRoute.params.pipe(
-    switchMap( params => this.eventService.get(params['id']) )
+    switchMap(params => Number(params['id']) ? this.eventService.get(params['id']) : of(new Event()))
   );
 
   constructor(
@@ -25,8 +26,28 @@ export class EventEditorComponent implements OnInit {
     private router: Router,
   ) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+  }
 
-
-
+  onUpdate(event: Event) {
+    if (!event.id) {
+      const modifiedEvent: Event = {
+        name: event.name,
+        date: event.date,
+        time: event.time,
+        location: event.location,
+      }
+      this.eventService.create(modifiedEvent).pipe(
+        tap(() => {
+          this.router.navigate(['']);
+        }),
+      ).subscribe();
+    } else {
+      this.eventService.update(event).pipe(
+        tap(() => {
+          this.router.navigate(['']);
+        }),
+      ).subscribe();
+    }
+  }
 }
